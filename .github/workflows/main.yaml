@@ -15,18 +15,16 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: '9.0.x'  # Roslyn typically builds on .NET 7 or similar, adjust if needed
+          dotnet-version: '7.0.x'   # Adjust based on Roslyn's SDK version requirement
 
       - name: Restore dependencies
-        run: msbuild /t:Restore src\Roslyn.sln
+        run: dotnet restore src/Roslyn.sln
 
       - name: Build solution
-        run: msbuild /m /p:Configuration=Debug src\Roslyn.sln
+        run: dotnet build src/Roslyn.sln --configuration Debug --no-restore
 
       - name: Run tests
-        run: |
-          # Run test projects and output trx files
-          dotnet test src\Tests\Compiler\Microsoft.CodeAnalysis.CSharp.UnitTests\Microsoft.CodeAnalysis.CSharp.UnitTests.csproj --logger "trx;LogFileName=TestResults.trx" --results-directory TestResults
+        run: dotnet test src/Compilers/CSharp/Test/Microsoft.CodeAnalysis.CSharp.UnitTests/Microsoft.CodeAnalysis.CSharp.UnitTests.csproj --logger "trx;LogFileName=TestResults.trx" --results-directory TestResults
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
