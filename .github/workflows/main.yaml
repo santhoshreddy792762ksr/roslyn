@@ -12,10 +12,16 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: Rename global.json to prevent SDK version conflicts
+        run: |
+          if (Test-Path global.json) {
+            Rename-Item -Path global.json -NewName global.json.backup
+          }
+
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: '7.0.x'   # Adjust based on Roslyn's SDK version requirement
+          dotnet-version: '9.0.x'   # Use installed compatible SDK version
 
       - name: Restore dependencies
         run: dotnet restore src/Roslyn.sln
