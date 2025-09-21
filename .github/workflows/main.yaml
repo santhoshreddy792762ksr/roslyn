@@ -21,16 +21,16 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: '9.0.x'   # Use installed compatible SDK version
+          dotnet-version: '9.0.x'   # Compatible SDK installed on runners
 
       - name: Restore dependencies
-        run: dotnet restore src/Roslyn.sln
+        run: dotnet restore Roslyn.sln
 
       - name: Build solution
-        run: dotnet build src/Roslyn.sln --configuration Debug --no-restore
+        run: dotnet build Roslyn.sln --configuration Debug --no-restore
 
       - name: Run tests
-        run: dotnet test src/Compilers/CSharp/Test/Microsoft.CodeAnalysis.CSharp.UnitTests/Microsoft.CodeAnalysis.CSharp.UnitTests.csproj --logger "trx;LogFileName=TestResults.trx" --results-directory TestResults
+        run: dotnet test src\Compilers\CSharp\Test\Microsoft.CodeAnalysis.CSharp.UnitTests\Microsoft.CodeAnalysis.CSharp.UnitTests.csproj --logger "trx;LogFileName=TestResults.trx" --results-directory TestResults
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
