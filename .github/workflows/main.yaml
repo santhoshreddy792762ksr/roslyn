@@ -1,0 +1,35 @@
+name: Roslyn Build and Test
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '9.0.x'  # Roslyn typically builds on .NET 7 or similar, adjust if needed
+
+      - name: Restore dependencies
+        run: msbuild /t:Restore src\Roslyn.sln
+
+      - name: Build solution
+        run: msbuild /m /p:Configuration=Debug src\Roslyn.sln
+
+      - name: Run tests
+        run: |
+          # Run test projects and output trx files
+          dotnet test src\Tests\Compiler\Microsoft.CodeAnalysis.CSharp.UnitTests\Microsoft.CodeAnalysis.CSharp.UnitTests.csproj --logger "trx;LogFileName=TestResults.trx" --results-directory TestResults
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestResults
+          path: TestResults/*.trx
